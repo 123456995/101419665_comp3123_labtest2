@@ -28,10 +28,8 @@ function App() {
           { day: "Thu", temp: Math.round(data.main.temp + 3), icon: "🌧️" },
           { day: "Fri", temp: Math.round(data.main.temp + 1), icon: "☀️" },
         ],
-        uvIndex: "N/A",
         humidity: `${data.main.humidity}%`,
         wind: `${data.wind.speed} km/h`,
-        population: "N/A",
       });
     } catch (err) {
       setError("Could not fetch weather data. Please try again.");
@@ -62,10 +60,8 @@ function App() {
           />
           <WeeklyForecast forecast={weather.weeklyForecast} />
           <Details
-            uvIndex={weather.uvIndex}
             humidity={weather.humidity}
             wind={weather.wind}
-            population={weather.population}
           />
         </>
       )}
