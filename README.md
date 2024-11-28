@@ -11,8 +11,5 @@ This project is a simple weather app built using React. It fetches weather data 
    ```bash
    git clone https://github.com/123456995/101419665_comp3123_labtest2.git
    cd 101419665_COMP3123_LABTEST2
-
-![image-3](https://github.com/user-attachments/assets/6e1820bd-00b6-458c-87d6-01381fe60279)
-![image-2](https://github.com/user-attachments/assets/5c31eec5-0172-4a96-a117-9b50a6691c77)
-![image-1](https://github.com/user-attachments/assets/d5295fea-bb73-4900-88f5-ec082c2b0264)
-![image](https://github.com/user-attachments/assets/4a2fb547-8784-40d7-a5c7-906f26c8d6d4)
+![Screenshot 2024-11-28 182354](https://github.com/user-attachments/assets/53f29a20-2f9e-4782-8f3b-7586c3afdeb9)
+![test](https://github.com/user-attachments/assets/4c125073-0042-4f19-823f-4cad75757e54)
