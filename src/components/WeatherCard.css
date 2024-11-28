@@ -1,0 +1,37 @@
+.weather-card {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 400px;
+    margin: auto;
+    text-align: center;
+    color: white;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .day {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .date {
+    font-size: 1rem;
+    color: #ddd;
+  }
+  
+  .location {
+    font-size: 1rem;
+    color: #bbb;
+  }
+  
+  .temperature {
+    font-size: 3.5rem;
+    font-weight: bold;
+  }
+  
+  .condition {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  

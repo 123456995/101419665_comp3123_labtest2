@@ -1,96 +1,76 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import WeatherCard from "./components/WeatherCard";
+import WeeklyForecast from "./components/WeeklyForecast";
+import Details from "./components/Details";
+import { fetchWeatherData } from "./utils/api";
 import "./App.css";
 
-const App = () => {
+function App() {
   const [city, setCity] = useState("Toronto");
-  const [weatherData, setWeatherData] = useState(null);
-  const [error, setError] = useState(null);
+  const [weather, setWeather] = useState(null);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchWeather = async () => {
-      const API_KEY = "2f57df5803b632594b593242a07d9991";
-      const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch weather data: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setWeatherData(data);
-        setError(null);
-      } catch (error) {
-        console.error("Error fetching weather data:", error);
-        setError(error.message);
-        setWeatherData(null);
-      }
-    };
-
-    fetchWeather();
-  }, [city]);
-
-  const handleSearch = (newCity) => {
-    setCity(newCity);
-  };
-
-  return (
-    <div className="App">
-      <h1>Weather App</h1>
-      <SearchBar onSearch={handleSearch} />
-      {error && <p className="error">{error}</p>}
-      {weatherData ? (
-        <WeatherDisplay data={weatherData} />
-      ) : (
-        !error && <p>Loading...</p>
-      )}
-    </div>
-  );
-};
-
-const SearchBar = ({ onSearch }) => {
-  const [input, setInput] = useState("");
-
-  const handleInputChange = (e) => {
-    setInput(e.target.value);
-  };
-
-  const handleSearchClick = () => {
-    if (input.trim() !== "") {
-      onSearch(input);
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const data = await fetchWeatherData(city);
+      setWeather({
+        day: new Date().toLocaleDateString("en-US", { weekday: "long" }),
+        date: new Date().toLocaleDateString(),
+        location: `${data.name} - ${data.sys.country}`,
+        temperature: Math.round(data.main.temp),
+        condition: data.weather[0].description,
+        weeklyForecast: [
+          { day: "Mon", temp: Math.round(data.main.temp + 2), icon: "☀️" },
+          { day: "Tue", temp: Math.round(data.main.temp - 1), icon: "⛅" },
+          { day: "Wed", temp: Math.round(data.main.temp), icon: "☁️" },
+          { day: "Thu", temp: Math.round(data.main.temp + 3), icon: "🌧️" },
+          { day: "Fri", temp: Math.round(data.main.temp + 1), icon: "☀️" },
+        ],
+        uvIndex: "N/A",
+        humidity: `${data.main.humidity}%`,
+        wind: `${data.wind.speed} km/h`,
+        population: "N/A",
+      });
+    } catch (err) {
+      setError("Could not fetch weather data. Please try again.");
     }
   };
 
   return (
-    <div className="search-bar">
-      <input
-        type="text"
-        value={input}
-        onChange={handleInputChange}
-        placeholder="Enter city name"
-      />
-      <button onClick={handleSearchClick}>Search</button>
+    <div className="weather-app">
+      <h1 className="title">Weather Forecast</h1>
+      <form className="search-bar" onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Enter city name"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
+      {error && <p className="error-message">{error}</p>}
+      {weather && (
+        <>
+          <WeatherCard
+            day={weather.day}
+            date={weather.date}
+            location={weather.location}
+            temperature={weather.temperature}
+            condition={weather.condition}
+          />
+          <WeeklyForecast forecast={weather.weeklyForecast} />
+          <Details
+            uvIndex={weather.uvIndex}
+            humidity={weather.humidity}
+            wind={weather.wind}
+            population={weather.population}
+          />
+        </>
+      )}
     </div>
   );
-};
-
-const WeatherDisplay = ({ data }) => {
-  if (!data || !data.main || !data.weather) {
-    return <p>Loading or no data available...</p>;
-  }
-
-  const { name, main, weather } = data;
-
-  return (
-    <div className="weather-display">
-      <h2>{name}</h2>
-      <p>Temperature: {main.temp}°C</p>
-      <p>Condition: {weather[0].description}</p>
-      <img
-        src={`http://openweathermap.org/img/wn/${weather[0].icon}@2x.png`}
-        alt={weather[0].description}
-      />
-    </div>
-  );
-};
+}
 
 export default App;
