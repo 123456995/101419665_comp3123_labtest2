@@ -4,19 +4,28 @@ import "./App.css";
 const App = () => {
   const [city, setCity] = useState("Toronto");
   const [weatherData, setWeatherData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchWeather = async () => {
-      const API_KEY = "b7dfac82f04e079b06aa1c42ec4b1dd7";
+      const API_KEY = "2f57df5803b632594b593242a07d9991";
       const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+
       try {
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch weather data: ${response.statusText}`);
+        }
         const data = await response.json();
         setWeatherData(data);
+        setError(null);
       } catch (error) {
         console.error("Error fetching weather data:", error);
+        setError(error.message);
+        setWeatherData(null);
       }
     };
+
     fetchWeather();
   }, [city]);
 
@@ -28,10 +37,11 @@ const App = () => {
     <div className="App">
       <h1>Weather App</h1>
       <SearchBar onSearch={handleSearch} />
+      {error && <p className="error">{error}</p>}
       {weatherData ? (
         <WeatherDisplay data={weatherData} />
       ) : (
-        <p>Loading...</p>
+        !error && <p>Loading...</p>
       )}
     </div>
   );
@@ -45,7 +55,9 @@ const SearchBar = ({ onSearch }) => {
   };
 
   const handleSearchClick = () => {
-    onSearch(input);
+    if (input.trim() !== "") {
+      onSearch(input);
+    }
   };
 
   return (
@@ -62,6 +74,10 @@ const SearchBar = ({ onSearch }) => {
 };
 
 const WeatherDisplay = ({ data }) => {
+  if (!data || !data.main || !data.weather) {
+    return <p>Loading or no data available...</p>;
+  }
+
   const { name, main, weather } = data;
 
   return (
